@@ -49,6 +49,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         if (imageSize % 2 != 0) {
             imageSize = imageSize + 1;
         }
+        // macOS texture fix
+        if (System.getProperty("os.name").contains("OS X")) {
+            imageSize = (int)Math.pow(2, Math.ceil(Math.log(imageSize) / Math.log(2)));
+        }
         image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
         // create a standard TF where lowest intensity maps to black, the highest to white, and opacity increases
         // linearly from 0.0 to 1.0 over the intensity range
