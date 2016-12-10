@@ -90,7 +90,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
      
 
-    short getVoxel(double[] coord) {
+    double getVoxel(double[] coord) {
 
         if (coord[0] < 0 || coord[0] > volume.getDimX() || coord[1] < 0 || coord[1] > volume.getDimY()
                 || coord[2] < 0 || coord[2] > volume.getDimZ()) {
@@ -112,10 +112,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         int y1 = (int) Math.min(Math.ceil(y), volume.getDimY() - 1);
         
         int z0 = (int) Math.floor(z);
-        int z1 = (int) Math.min(Math.ceil(y), volume.getDimZ() - 1);
+        int z1 = (int) Math.min(Math.ceil(z), volume.getDimZ() - 1);
 
         double c000 = volume.getVoxel(x0, y0, z0);
-        double c001 = volume.getVoxel(x0,y0,z1);
+        double c001 = volume.getVoxel(x0, y0, z1);
         double c010 = volume.getVoxel(x0, y1, z0);
         double c011 = volume.getVoxel(x0, y1, z1);
         double c100 = volume.getVoxel(x1, y0, z0);
@@ -123,7 +123,27 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double c110 = volume.getVoxel(x1, y1, z0);
         double c111 = volume.getVoxel(x1, y1, z1);
         
+        // x-dimension
+        double c00 = interpolate(x, x0, x1, c000, c100);
+        double c10 = interpolate(x, x0, x1, c010, c110);
+        double c01 = interpolate(x, x0, x1, c001, c101);
+        double c11 = interpolate(x, x0, x1, c011, c111);
+        
+        // y-dimension
+        double c0 = interpolate(y, y0, y1, c00, c01);
+        double c1 = interpolate(y, y0, y1, c10, c11);
+        
+        // z-dimension
+        return interpolate(z, z0, z1, c0, c1);
+        
 //        return volume.getVoxel(x, y, z);
+    }
+    
+    public static double interpolate(double x, double x0, double x1, double y0, double y1) {
+        
+        double alpha = (x - x0) / (x1 - x0);
+        
+        return y0 * (1 - alpha) + y1 * alpha;
     }
 
     // == SLICER ===========================================
