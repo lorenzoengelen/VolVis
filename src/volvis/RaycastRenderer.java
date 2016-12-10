@@ -211,6 +211,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     if (val > maximumValue) {
                         maximumValue = val;
                     }
+                    
+                    if (val / max > 0.95) {
+                        break;
+                    }
                 }
                 
                 voxelColor.r = maximumValue / max;
