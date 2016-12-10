@@ -6,6 +6,7 @@ package volume;
 
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Math.sqrt;
 
 /**
  *
@@ -62,6 +63,10 @@ public class Volume {
     
     public int getDimZ() {
         return dimZ;
+    }
+    
+    public int getDiagonal() {
+        return (int) sqrt(dimX * dimX + dimY * dimY + dimZ * dimZ);
     }
 
     public short getMinimum() {
