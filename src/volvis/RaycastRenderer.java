@@ -31,6 +31,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     TransferFunction2DEditor tfEditor2D;
     
     private String renderType = "Slicer";
+    // necessary setup
+    private double[] viewVec = new double[3];
+    private double[] uVec = new double[3];
+    private double[] vVec = new double[3];
+    private int imageCenter = 0;
+    private double[] pixelCoord = new double[3];
+    private double[] volumeCenter = new double[3];
+    private double max = 0;
+    private TFColor voxelColor = new TFColor();
     
     public RaycastRenderer() {
         panel = new RaycastRendererPanel(this);
@@ -143,29 +152,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     // == SLICER ===========================================
     void slicer(double[] viewMatrix) {
 
-        // clear image
-        clearImage();
-
-        // vector uVec and vVec define a plane through the origin, 
-        // perpendicular to the view vector viewVec
-        double[] viewVec = new double[3];
-        double[] uVec = new double[3];
-        double[] vVec = new double[3];
-        VectorMath.setVector(viewVec, viewMatrix[2], viewMatrix[6], viewMatrix[10]);
-        VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
-        VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
-
-        // image is square
-        int imageCenter = image.getWidth() / 2;
-
-        double[] pixelCoord = new double[3];
-        double[] volumeCenter = new double[3];
-        VectorMath.setVector(volumeCenter, volume.getDimX() / 2, volume.getDimY() / 2, volume.getDimZ() / 2);
-
-        // sample on a plane through the origin of the volume data
-        double max = volume.getMaximum();
-        TFColor voxelColor = new TFColor();
-
+        generalSetup(viewMatrix);
         
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
@@ -201,7 +188,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     
     // == MIP ==============================================
     void mip(double[] viewMatrix) {
-        clearImage();
+        generalSetup(viewMatrix);
     }
     
     // clear image
@@ -211,6 +198,23 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 image.setRGB(i, j, 0);
             }
         }
+    }
+    
+    // general setup
+    private void generalSetup(double[] viewMatrix) {
+        clearImage();
+        
+        VectorMath.setVector(viewVec, viewMatrix[2], viewMatrix[6], viewMatrix[10]);
+        VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
+        VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
+        
+        imageCenter = image.getWidth() / 2;
+
+        pixelCoord = new double[3];
+        volumeCenter = new double[3];
+        VectorMath.setVector(volumeCenter, volume.getDimX() / 2, volume.getDimY() / 2, volume.getDimZ() / 2);
+        
+        max = volume.getMaximum();
     }
     
     private void drawBoundingBox(GL2 gl) {
