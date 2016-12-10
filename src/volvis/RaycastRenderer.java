@@ -289,6 +289,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
     }
     
+    // == 2D Transfer Function =============================
+    void transferFunction2D(double[] viewMatrix) {
+        
+    }
+    
     // clear image
     private void clearImage() {
         for (int j = 0; j < image.getHeight(); j++) {
@@ -395,6 +400,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             mip(viewMatrix);
         } else if ("Compositing".equals(renderType)) {
             compositing(viewMatrix);
+        } else if ("TransferFunction2D".equals(renderType)) {
+            transferFunction2D(viewMatrix);
         } else {
             slicer(viewMatrix);
         }
