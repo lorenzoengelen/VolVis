@@ -196,7 +196,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 
                 double maximumValue = 0;
                 
-                for (int k = 0; k < volume.getDiagonal() - 1; k += 1) {
+                for (int k = 0; k < volume.getDiagonal() - 1; k++) {
                     pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter)+ volumeCenter[0];
                     pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
                     pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
@@ -229,7 +229,33 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         generalSetup(viewMatrix);
         
-        
+        for (int j = 0; j < image.getHeight(); j++) {
+            for (int i = 0; i < image.getWidth(); i++) {
+                
+                voxelColor = new TFColor(0, 0, 0, 0);
+
+                for (int k = 0; k < volume.getDiagonal() - 1; k++) {
+                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter)+ volumeCenter[0];
+                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
+                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
+                    
+                    int val = (int) getVoxel(pixelCoord);
+                    TFColor color = tFunc.getColor(val);
+                    
+                    voxelColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * color.a * color.r;
+                    voxelColor.g = voxelColor.g * voxelColor.a + (1 - voxelColor.a) * color.a * color.g;
+                    voxelColor.b = voxelColor.b * voxelColor.a + (1 - voxelColor.a) * color.a * color.b;
+                    voxelColor.a = voxelColor.a + (1 - voxelColor.a) * color.a;
+                } 
+                
+                int c_alpha = voxelColor.a <= 1.0 ? (int) Math.floor(voxelColor.a * 255) : 255;
+                int c_red = voxelColor.r <= 1.0 ? (int) Math.floor(voxelColor.r * 255) : 255;
+                int c_green = voxelColor.g <= 1.0 ? (int) Math.floor(voxelColor.g * 255) : 255;
+                int c_blue = voxelColor.b <= 1.0 ? (int) Math.floor(voxelColor.b * 255) : 255;
+                int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
+                image.setRGB(i, j, pixelColor);
+            }
+        }
         
     }
     
