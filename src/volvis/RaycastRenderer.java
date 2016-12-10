@@ -202,8 +202,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         }
 
     }
-
-
+    
+    // == MIP ==============================================
+    void mip(double[] viewMatrix) {
+        
+    }
+    
     private void drawBoundingBox(GL2 gl) {
         gl.glPushAttrib(GL2.GL_CURRENT_BIT);
         gl.glDisable(GL2.GL_LIGHTING);
