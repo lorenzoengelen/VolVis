@@ -266,6 +266,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     voxelColor.g = voxelColor.g * voxelColor.a + (1 - voxelColor.a) * color.a * color.g;
                     voxelColor.b = voxelColor.b * voxelColor.a + (1 - voxelColor.a) * color.a * color.b;
                     voxelColor.a = voxelColor.a + (1 - voxelColor.a) * color.a;
+                    
+                    if (voxelColor.a > 0.95) {
+                        break;
+                    }
                 } 
                 
                 int c_alpha = voxelColor.a <= 1.0 ? (int) Math.floor(voxelColor.a * 255) : 255;
