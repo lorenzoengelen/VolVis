@@ -88,8 +88,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     public TransferFunctionEditor getTFPanel() {
         return tfEditor;
     }
-     
-
+    
+    
     double getVoxel(double[] coord) {
 
         if (coord[0] < 0 || coord[0] > volume.getDimX() || coord[1] < 0 || coord[1] > volume.getDimY()
@@ -144,11 +144,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     void slicer(double[] viewMatrix) {
 
         // clear image
-        for (int j = 0; j < image.getHeight(); j++) {
-            for (int i = 0; i < image.getWidth(); i++) {
-                image.setRGB(i, j, 0);
-            }
-        }
+        clearImage();
 
         // vector uVec and vVec define a plane through the origin, 
         // perpendicular to the view vector viewVec
@@ -205,7 +201,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     
     // == MIP ==============================================
     void mip(double[] viewMatrix) {
-        
+        clearImage();
+    }
+    
+    // clear image
+    private void clearImage() {
+        for (int j = 0; j < image.getHeight(); j++) {
+            for (int i = 0; i < image.getWidth(); i++) {
+                image.setRGB(i, j, 0);
+            }
+        }
     }
     
     private void drawBoundingBox(GL2 gl) {
@@ -281,8 +286,14 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         long startTime = System.currentTimeMillis();
         
-        // invoke slicer
-        slicer(viewMatrix);    
+        // select render type
+        if (renderType == "Slicer") {
+            slicer(viewMatrix);
+        } else if (renderType == "MIP") {
+            mip(viewMatrix);
+        } else {
+            slicer(viewMatrix);
+        }
         
         long endTime = System.currentTimeMillis();
         double runningTime = (endTime - startTime);
