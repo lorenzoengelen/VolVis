@@ -96,15 +96,37 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 || coord[2] < 0 || coord[2] > volume.getDimZ()) {
             return 0;
         }
+        
+//        int x = (int) Math.floor(coord[0]);
+//        int y = (int) Math.floor(coord[1]);
+//        int z = (int) Math.floor(coord[2]);
+        
+        double x = coord[0];
+        double y = coord[1];
+        double z = coord[2];
+        
+        int x0 = (int) Math.floor(x);
+        int x1 = (int) Math.min(Math.ceil(x), volume.getDimX() - 1);
+        
+        int y0 = (int) Math.floor(y);
+        int y1 = (int) Math.min(Math.ceil(y), volume.getDimY() - 1);
+        
+        int z0 = (int) Math.floor(z);
+        int z1 = (int) Math.min(Math.ceil(y), volume.getDimZ() - 1);
 
-        int x = (int) Math.floor(coord[0]);
-        int y = (int) Math.floor(coord[1]);
-        int z = (int) Math.floor(coord[2]);
-
-        return volume.getVoxel(x, y, z);
+        double c000 = volume.getVoxel(x0, y0, z0);
+        double c001 = volume.getVoxel(x0,y0,z1);
+        double c010 = volume.getVoxel(x0, y1, z0);
+        double c011 = volume.getVoxel(x0, y1, z1);
+        double c100 = volume.getVoxel(x1, y0, z0);
+        double c101 = volume.getVoxel(x1, y0, z1);
+        double c110 = volume.getVoxel(x1, y1, z0);
+        double c111 = volume.getVoxel(x1, y1, z1);
+        
+//        return volume.getVoxel(x, y, z);
     }
 
-
+    // == SLICER ===========================================
     void slicer(double[] viewMatrix) {
 
         // clear image
@@ -144,7 +166,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter)
                         + volumeCenter[2];
 
-                int val = getVoxel(pixelCoord);
+                double val = getVoxel(pixelCoord);
                 
                 // Map the intensity to a grey value by linear scaling
                 voxelColor.r = val/max;
@@ -240,6 +262,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, viewMatrix, 0);
 
         long startTime = System.currentTimeMillis();
+        
+        // invoke slicer
         slicer(viewMatrix);    
         
         long endTime = System.currentTimeMillis();
