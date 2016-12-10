@@ -229,7 +229,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
                 image.setRGB(i, j, pixelColor);
                 
-                if (res == 2) {
+                if (res > 1) {
                     image.setRGB(i, j + 1, pixelColor);
                     image.setRGB(i + 1, j, pixelColor);
                     image.setRGB(i + 1, j + 1, pixelColor);
@@ -244,12 +244,17 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         generalSetup(viewMatrix);
         
-        for (int j = 0; j < image.getHeight(); j++) {
-            for (int i = 0; i < image.getWidth(); i++) {
+        int res = 1;
+        if (interactiveMode) {
+            res = 2;
+        }
+        
+        for (int j = 0; j < image.getHeight(); j += res) {
+            for (int i = 0; i < image.getWidth(); i += res) {
                 
                 voxelColor = new TFColor(0, 0, 0, 0);
 
-                for (int k = 0; k < volume.getDiagonal() - 1; k++) {
+                for (int k = 0; k < volume.getDiagonal() - 1; k += res) {
                     pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter)+ volumeCenter[0];
                     pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
                     pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
@@ -269,6 +274,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 int c_blue = voxelColor.b <= 1.0 ? (int) Math.floor(voxelColor.b * 255) : 255;
                 int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
                 image.setRGB(i, j, pixelColor);
+                
+                if (res > 1) {
+                    image.setRGB(i, j + 1, pixelColor);
+                    image.setRGB(i + 1, j, pixelColor);
+                    image.setRGB(i + 1, j + 1, pixelColor);
+                }
             }
         }
         
