@@ -191,8 +191,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         generalSetup(viewMatrix);
         
-        for (int j = 0; j < image.getHeight(); j++) {
-            for (int i = 0; i < image.getWidth(); i++) {
+        int res = 1;
+        if (interactiveMode) {
+            res = 2;
+        }
+        
+        for (int j = 0; j < image.getHeight(); j += res) {
+            for (int i = 0; i < image.getWidth(); i += res) {
                 
                 double maximumValue = 0;
                 
@@ -219,6 +224,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 int c_blue = voxelColor.b <= 1.0 ? (int) Math.floor(voxelColor.b * 255) : 255;
                 int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
                 image.setRGB(i, j, pixelColor);
+                
+                if (res == 2) {
+                    image.setRGB(i, j + 1, pixelColor);
+                    image.setRGB(i + 1, j, pixelColor);
+                    image.setRGB(i + 1, j + 1, pixelColor);
+                }
             }
         }
         
