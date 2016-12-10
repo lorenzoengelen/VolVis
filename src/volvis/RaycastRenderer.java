@@ -97,10 +97,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             return 0;
         }
         
-//        int x = (int) Math.floor(coord[0]);
-//        int y = (int) Math.floor(coord[1]);
-//        int z = (int) Math.floor(coord[2]);
-        
         double x = coord[0];
         double y = coord[1];
         double z = coord[2];
@@ -135,8 +131,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         // z-dimension
         return interpolate(z, z0, z1, c0, c1);
-        
-//        return volume.getVoxel(x, y, z);
     }
     
     public static double interpolate(double x, double x0, double x1, double y0, double y1) {
