@@ -30,9 +30,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     TransferFunctionEditor tfEditor;
     TransferFunction2DEditor tfEditor2D;
     
+    private String renderType = "Slicer";
+    
     public RaycastRenderer() {
         panel = new RaycastRendererPanel(this);
         panel.setSpeedLabel("0");
+    }
+    
+    public void setRenderer(String renderer) {
+        renderType = renderer;
     }
 
     public void setVolume(Volume vol) {
