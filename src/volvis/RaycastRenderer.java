@@ -224,6 +224,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
     }
     
+    // == COMPOSITING ======================================
+    void compositing(double[] viewMatrix) {
+        
+        generalSetup(viewMatrix);
+        
+        
+        
+    }
+    
     // clear image
     private void clearImage() {
         for (int j = 0; j < image.getHeight(); j++) {
@@ -324,10 +333,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         long startTime = System.currentTimeMillis();
         
         // select render type
-        if (renderType == "Slicer") {
+        if ("Slicer".equals(renderType)) {
             slicer(viewMatrix);
-        } else if (renderType == "MIP") {
+        } else if ("MIP".equals(renderType)) {
             mip(viewMatrix);
+        } else if ("Compositing".equals(renderType)) {
+            compositing(viewMatrix);
         } else {
             slicer(viewMatrix);
         }
