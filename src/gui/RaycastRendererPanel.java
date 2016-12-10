@@ -148,7 +148,7 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_compositingButtonActionPerformed
 
     private void tf2dButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf2dButtonActionPerformed
-        renderer.setRenderer("2DTransfer");
+        renderer.setRenderer("TransferFunction2D");
         renderer.changed();
     }//GEN-LAST:event_tf2dButtonActionPerformed
 
