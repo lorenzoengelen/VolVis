@@ -291,8 +291,15 @@ public class TransferFunction2DEditor extends javax.swing.JPanel {
         public double radius;
         public TFColor color;
         
+        public double minKnissGradient; //
+        public double maxKnissGradient; //
+        
 
         public TriangleWidget(short base, double r) {
+            
+            this.minKnissGradient = ybins; //
+            this.maxKnissGradient = 0; //
+            
             this.baseIntensity = base;
             this.radius = r;
             this.color = new TFColor(0.0, 204.0/255.0, 153.0/255.0, 0.3);
