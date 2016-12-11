@@ -24,7 +24,7 @@ public class GradientVolume {
         
 //        if (x < 0 || x >= dimX || y < 0 || y >= dimY || z < 0 || z >= dimZ) {
 //            return new VoxelGradient(0, 0, 0);
-//        } 
+//        }
         return data[x + dimX * (y + dimY * z)];
     }
 
