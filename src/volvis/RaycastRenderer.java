@@ -32,6 +32,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     TransferFunction2DEditor tfEditor2D;
     
     private String renderType = "Slicer";
+    private boolean shading = false;
     // necessary setup
     private double[] viewVec = new double[3];
     private double[] uVec = new double[3];
@@ -49,6 +50,14 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     
     public void setRenderer(String renderer) {
         renderType = renderer;
+    }
+    
+    public void toggleShading() {
+        if (shading) {
+            shading = false;
+        } else {
+            shading = true;
+        }
     }
 
     public void setVolume(Volume vol) {
