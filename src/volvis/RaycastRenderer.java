@@ -199,11 +199,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 double maximumValue = 0;
                 
                 for (int k = 0; k < volume.getDiagonal() - 1; k++) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter)+ volumeCenter[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
-                    
-                    double val = getVoxel(pixelCoord);
+
+                    double val = getValue(i, j, k);
                     
                     if (val > maximumValue) {
                         maximumValue = val;
@@ -252,11 +249,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 voxelColor = new TFColor(0, 0, 0, 0);
 
                 for (int k = 0; k < volume.getDiagonal() - 1; k += res) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter)+ volumeCenter[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
-                    
-                    int val = (int) getVoxel(pixelCoord);
+
+                    int val = (int) getValue(i, j, k);
                     TFColor color = tFunc.getColor(val);
                     
                     voxelColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * color.a * color.r;
@@ -346,6 +340,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(volumeCenter, volume.getDimX() / 2, volume.getDimY() / 2, volume.getDimZ() / 2);
         
         max = volume.getMaximum();
+    }
+    
+    // get value
+    private double getValue(int i, int j, int k) {
+        pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter) + volumeCenter[0];
+        pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
+        pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
+        
+        return getVoxel(pixelCoord);
     }
     
     private void drawBoundingBox(GL2 gl) {
