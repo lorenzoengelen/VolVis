@@ -294,11 +294,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 voxelColor = new TFColor(0, 0, 0, 0);
                 
                 for (int k = 0; k < volume.getDiagonal() - 1; k++) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter) + volumeCenter[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
                     
-                    int val = (int) getVoxel(pixelCoord);
+                    int val = (int) getValue(i, j, k);
+                    double opacity = 0;
+                    double opacityAcc = voxelColor.a;
                     
                     
                     
@@ -344,11 +343,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     
     // get value
     private double getValue(int i, int j, int k) {
+        pixelCoord = getPixelCoord(i, j, k);
+        return getVoxel(pixelCoord);
+    }
+    
+    private double[] getPixelCoord(int i, int j, int k) {
         pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * (k - imageCenter) + volumeCenter[0];
         pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * (k - imageCenter) + volumeCenter[1];
         pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * (k - imageCenter) + volumeCenter[2];
         
-        return getVoxel(pixelCoord);
+        return pixelCoord;
     }
     
     private void drawBoundingBox(GL2 gl) {
