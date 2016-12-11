@@ -317,6 +317,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     pixelCoord = getPixelCoord(i, j, k);
                     
                     double alpha = 0;
+                    VoxelGradient gradient = gradients.getGradient((int) pixelCoord[0], (int) pixelCoord[1], (int) pixelCoord[2]);
                     double gradientMag = getGradientMag(pixelCoord);
                     double minGradient = (((tfEditor2D.ybins-tfEditor2D.triangleWidget.minKnissGradient)/tfEditor2D.ybins)*gradients.getMaxGradientMagnitude());
                     double maxGradient = (((tfEditor2D.ybins-tfEditor2D.triangleWidget.maxKnissGradient)/tfEditor2D.ybins)*gradients.getMaxGradientMagnitude());
@@ -335,11 +336,44 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                         alpha = 0;
                     }
                     
-                    voxelColor.a = (voxelColor.a) +(1 - voxelColor.a) * alpha;
-                    
                     if (shading) {
+                        double length = VectorMath.length(viewVec);
+                        double[] V = new double[3];
+                        VectorMath.setVector(V, (-viewVec[0]/length), (-viewVec[1]/length), (-viewVec[2]/length));
+                        double[] L = V;
+                        double[] H = V;
+                        double[] N = new double[3];
+
+                        TFColor Ia = tfEditor2D.triangleWidget.color;
+
+                        double kambient = 0.1;
+                        double kdiff = 0.7;
+                        double kspec = 0.2;
                         
+                        VectorMath.setVector(N, gradient.x / gradientMag, gradient.y / gradientMag, gradient.z / gradientMag);
+                        double dotNL;
+                        double dotNH;
+                        if (VectorMath.dotproduct(N, L) > 0) {
+                            dotNL = VectorMath.dotproduct(N, L);
+                        } else {
+                            dotNL = 0.01;
+                        }
+                        if (VectorMath.dotproduct(N, H) > 0) {
+                            dotNH = VectorMath.dotproduct(N, H);
+                        } else {
+                            dotNH = 0.01;
+                        }
+                        
+                        double r = kambient + Ia.r * kdiff * dotNL + kspec * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH;
+                        double g = kambient + Ia.g * kdiff * dotNL + kspec * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH;
+                        double b = kambient + Ia.b * kdiff * dotNL + kspec * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH * dotNH;
+
+                        voxelColor.r = voxelColor.r * voxelColor.a + (1 - voxelColor.a) * alpha * r;
+                        voxelColor.g = voxelColor.g * voxelColor.a + (1 - voxelColor.a) * alpha * g;
+                        voxelColor.b = voxelColor.b * voxelColor.a + (1 - voxelColor.a) * alpha * b;
                     }
+                    
+                    voxelColor.a = (voxelColor.a) +(1 - voxelColor.a) * alpha;
                     
                     if (voxelColor.a > 0.95) {
                         break;
