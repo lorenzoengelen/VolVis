@@ -292,6 +292,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     // == 2D Transfer Function =============================
     void transferFunction2D(double[] viewMatrix) {
         
+        generalSetup(viewMatrix);
+        
+        
+        
     }
     
     // clear image
