@@ -21,7 +21,11 @@ public class GradientVolume {
     }
 
     public VoxelGradient getGradient(int x, int y, int z) {
-        return data[x + dimX * (y + dimY * z)];
+        if (x<0 || x >= dimX || y<0 || y >= dimY || z<0 || z >= dimZ){
+            return new VoxelGradient(0,0,0);
+        } else {
+            return data[x + dimX * (y + dimY * z)];
+        }
     }
 
     
