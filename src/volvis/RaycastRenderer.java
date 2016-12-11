@@ -16,6 +16,7 @@ import util.TFChangeListener;
 import util.VectorMath;
 import volume.GradientVolume;
 import volume.Volume;
+import volume.VoxelGradient;
 
 /**
  *
@@ -287,20 +288,40 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         float base = tfEditor2D.triangleWidget.baseIntensity;
         double radius = tfEditor2D.triangleWidget.radius;
+        double alphaV = tfEditor2D.triangleWidget.color.a;
         
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
                 
                 voxelColor = new TFColor(0, 0, 0, 0);
+                voxelColor = tfEditor2D.triangleWidget.color;
+                voxelColor.a = 0;
                 
                 for (int k = 0; k < volume.getDiagonal() - 1; k++) {
                     
-                    int val = (int) getValue(i, j, k);
-                    double opacity = 0;
-                    double opacityAcc = voxelColor.a;
+                    int valCurrent = (int) getValue(i, j, k);
+                    pixelCoord = getPixelCoord(i, j, k);
                     
+                    double alpha = 0;
+                    double gradientMag = getGradientMag(pixelCoord);
+                    double minGradient = (((tfEditor2D.ybins-tfEditor2D.triangleWidget.minKnissGradient)/tfEditor2D.ybins)*gradients.getMaxGradientMagnitude());
+                    double maxGradient = (((tfEditor2D.ybins-tfEditor2D.triangleWidget.maxKnissGradient)/tfEditor2D.ybins)*gradients.getMaxGradientMagnitude());
+
+                    if (gradientMag <= maxGradient && gradientMag >= minGradient){
+
+                        if (gradientMag == 0 && valCurrent == base) {
+                            alpha = alphaV;
+                        } else if (gradientMag > 0 && ((valCurrent - (radius * gradientMag)) <= base && base <= (valCurrent + (radius * gradientMag)))) {
+                            alpha = alphaV * (1 - (1 / radius) * ((base - valCurrent) / gradientMag));
+                        } else {
+                            alpha = 0;
+                        }
                     
+                    } else {
+                        alpha = 0;
+                    }
                     
+                    voxelColor.a = (voxelColor.a) +(1 - voxelColor.a) * alpha;
                 }
                 
                 int c_alpha = voxelColor.a <= 1.0 ? (int) Math.floor(voxelColor.a * 255) : 255;
@@ -313,6 +334,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             }
         }
         
+    }
+    
+    // gradient magnitude boundary bug fix
+    private double getGradientMag(double[] pixelCoord) {
+        if (pixelCoord[0] < 0 || pixelCoord[0] > volume.getDimX() - 1 || pixelCoord[1] < 0 || pixelCoord[1] > volume.getDimY() - 1 || pixelCoord[2] < 0 || pixelCoord[2] > volume.getDimZ() - 1) {
+            return 0;
+        }
+        
+        return gradients.getGradient((int) pixelCoord[0], (int) pixelCoord[1], (int) pixelCoord[2]).mag;
     }
     
     // clear image
