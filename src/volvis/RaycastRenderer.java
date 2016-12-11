@@ -290,14 +290,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double radius = tfEditor2D.triangleWidget.radius;
         double alphaV = tfEditor2D.triangleWidget.color.a;
         
-        for (int j = 0; j < image.getHeight(); j++) {
-            for (int i = 0; i < image.getWidth(); i++) {
+        int res = 1;
+        if (interactiveMode) {
+            res = 2;
+        }
+        
+        for (int j = 0; j < image.getHeight(); j += res) {
+            for (int i = 0; i < image.getWidth(); i += res) {
                 
                 voxelColor = new TFColor(0, 0, 0, 0);
                 voxelColor = tfEditor2D.triangleWidget.color;
                 voxelColor.a = 0;
                 
-                for (int k = 0; k < volume.getDiagonal() - 1; k++) {
+                for (int k = 0; k < volume.getDiagonal() - 1; k += res) {
                     
                     int valCurrent = (int) getValue(i, j, k);
                     pixelCoord = getPixelCoord(i, j, k);
@@ -331,6 +336,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
                 image.setRGB(i, j, pixelColor);
                 
+                if (res > 1) {
+                    image.setRGB(i, j + 1, pixelColor);
+                    image.setRGB(i + 1, j, pixelColor);
+                    image.setRGB(i + 1, j + 1, pixelColor);
+                }
             }
         }
         
